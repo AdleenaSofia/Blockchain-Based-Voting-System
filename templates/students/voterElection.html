@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ election_name }} - Voting Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesVoter.css') }}">
+    <script>
+        function handleSelection(candidateId) {
+            // Clear background for all candidates
+            const candidates = document.querySelectorAll('.candidate-info');
+            candidates.forEach(candidate => {
+                candidate.style.backgroundColor = '#EBF2FA'; // Reset to default color
+                candidate.querySelector('input[type="radio"]').checked = false; // Uncheck all radios
+            });
+    
+            // Set background for selected candidate
+            const selectedCandidate = document.querySelector(`.candidate-info[data-id="${candidateId}"]`);
+            selectedCandidate.style.backgroundColor = '#D4E157'; // Set highlight color
+            selectedCandidate.querySelector('input[type="radio"]').checked = true; // Check the selected radio
+    
+            // Set hidden input for selected candidate
+            document.getElementById('selectedCandidate').value = candidateId;
+        }
+    </script>
+    
+</head>
+<body>
+    <div class="voter-election-container">
+        <h2>{{ election_name }}</h2>
+
+        <form action="{{ url_for('cast_vote', election_id=election_id) }}" method="POST">
+            <input type="hidden" id="selectedCandidate" name="selectedCandidate" value="">
+            <div class="candidate-container">
+                {% for candidate in candidates %}
+                <div class="candidate-info" data-id="{{ candidate[0] }}" onclick="handleSelection('{{ candidate[0] }}')">
+                    <div class="info">
+                        <p>Name: {{ candidate[1] }}</p>
+                        <p>ID: {{ candidate[2] }}</p>
+                        <p>Course: {{ candidate[3] }}</p>
+                        <p>Semester: {{ candidate[4] }}</p>
+                    </div>
+                    <input type="radio" name="candidate" class="vote-radio" value="{{ candidate[0] }}" hidden>
+                    <label for="candidate{{ candidate[0] }}">{{ candidate[1] }} ({{ candidate[2] }})</label>
+                </div>
+                {% endfor %}
+                <button type="submit" class="submit-button">Submit</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

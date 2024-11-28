@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesAdmin2.css') }}">
+    <script src="{{ url_for('static', filename='js/add_student_scripts.js') }}" defer></script>
+</head>
+<body>
+    <!--Sidebar-->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>B B V S</h2>
+        </div>
+        <ul class="sidebar-links">
+            <li>
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fa-solid fa-chart-simple"></i><span class="material-symbols-outlined">dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('student') }}">
+                    <i class="fa-solid fa-users"></i><span class="material-symbols-outlined">Students</span>
+                </a>
+                <ul class="child-links">
+                    <li>
+                        <a href="{{ url_for('list_of_student') }}">
+                            <i class="fa-solid fa-list"></i><span class="material-symbols-outlined">List of Students</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="{{ url_for('vote') }}">
+                    <i class="fa-solid fa-user-check"></i><span class="material-symbols-outlined">Voting</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('logout') }}">
+                    <i class="fa-solid fa-right-from-bracket"></i><span class="material-symbols-outlined">logout</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+    <!--End Sidebar-->
+
+        <!-- Add Student Form -->
+        <div class="add_student_container">
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <div class="form-container">
+                <h2>Add Student Form</h2>
+                <form action="{{ url_for('add_student') }}" method="POST" class="student-form" id="studentForm">
+                    <label for="student-id">Student ID: </label>
+                    <input type="text" id="student-id" name="student-id" placeholder="Enter student ID" required>
+    
+                    <label for="name">Name: </label> 
+                    <input type="text" id="name" name="name" placeholder="Enter student name" required>
+    
+                    <label for="email">Email: </label>
+                    <input type="email" id="email" name="email" placeholder="Enter student email" required>
+    
+                    <label for="course">Course: </label>
+                    <input type="text" id="course" name="course" placeholder="Enter student course" required>
+    
+                    <label for="semester">Semester: </label>
+                    <input type="text" id="semester" name="semester" placeholder="Enter student semester" required>
+    
+                    <button type="submit" class="add-student-button">Add Student</button>
+                </form>
+    
+                
+            </div>
+            <div class="file-container">
+                <h2>Add Student File</h2>
+                <form action="{{ url_for('upload_student_file') }}" method="POST" enctype="multipart/form-data">
+                    <div class="file is-boxed" id="file-upload-box">
+                        <label class="file-label" for="fileInput">
+                            <input class="file-input" type="file" name="fileStudent" id="fileInput" required />
+                            <span class="file-cta">
+                                <span class="file-label-text">Choose file</span>
+                            </span>
+                            <span class="file-name" id="fileName"></span>
+                        </label>
+                    </div>
+                    <button type="submit" class="add-student-button">Add Student</button>
+                    <p class="note-text">Note: Please make sure the coloumn name should be: <br>Name, StudentID, Course, Email, Semester</p>
+                </form>
+            </div>
+            
+            
+        </div>
+        <!-- End Add Student Form-->
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styleAdmin.css') }}">
+
+
+</head>
+<body>
+    <!--Sidebar-->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>B B V S</h2>
+        </div>
+        <ul class="sidebar-links">
+            <li>
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fa-solid fa-chart-simple"></i><span class="material-symbols-outlined">dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('student') }}">
+                    <i class="fa-solid fa-users"></i><span class="material-symbols-outlined">Students</span>
+                </a>
+                <ul class="child-links">
+                    <li>
+                        <a href="{{ url_for('list_of_student') }}">
+                            <i class="fa-solid fa-list"></i><span class="material-symbols-outlined">List of Students</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="{{ url_for('vote') }}">
+                    <i class="fa-solid fa-user-check"></i><span class="material-symbols-outlined">Voting</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('logout') }}">
+                    <i class="fa-solid fa-right-from-bracket"></i><span class="material-symbols-outlined">logout</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+    <!--End Sidebar-->
+
+    <!--Dashboard-->
+    <section class="dashboard">
+        <div class="dash-content">
+            <div class="overview">
+                <div class="title">
+                    <i class="fa-solid fa-chart-simple"></i>
+                    <span class="text">Dashboard</span>
+                </div>
+            </div>
+
+            <div class="boxes">
+                <div class="box box1">
+                    <i class="fa-solid fa-users"></i>
+                    <span class="text">Students</span>
+                    <span class="number">{{ student_count }}</span>
+                </div>
+                <div class="box box2">
+                    <i class="fa-solid fa-user-check"></i>
+                    <span class="text">Election</span>
+                    <span class="number">{{ election_count }}</span>
+                </div>
+                <div class="box box3">
+                    <i class="fa-regular fa-square-check"></i>
+                    <span class="text">Start Vote</span>
+                    <span class="number"><a href="{{ url_for('ElectionForm') }}"><div class="button">
+                        Start a vote
+                    </div></a></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="activity">
+            <div class="title">
+                <i class="fa-solid fa-user-check"></i>
+                <span class="text">Election</span>
+            </div>
+
+            <div class="election-cards-container">
+                {% for election in latest_elections %}
+            <div class="election-card">
+                
+                <a href="{{ url_for('ElectionAnalytics', election_id=election[0]) }}" class="card-link">
+                    <div class="card">
+                        <div class="card-content">
+                            <p><strong>Name:</strong> {{ election[1] }}</p>
+                            <p><strong>Date:</strong> {{ election[2].strftime('%d %B %Y') }}</p>
+                            <p><strong>Total Candidates:</strong> {{ election[3] }}</p>
+                            <p><strong>Total Voters:</strong> {{ election[4] }}</p>
+                        </div>
+                    </div>
+                </a>
+                
+            </div>
+            {% endfor %}
+        </div>
+        </div>
+    </section>
+    <!--End of Dashboard-->
+
+</body>
+</html>

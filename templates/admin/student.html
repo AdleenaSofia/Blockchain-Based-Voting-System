@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesAdmin2.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Fetch and create Course Chart
+            fetch('/admin/student_counts_by_course')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data || data.error) {
+                        console.error('No data or error in fetching course data:', data.error);
+                        return;
+                    }
+        
+                    const courseLabels = data.map(item => item.course);
+                    const courseCounts = data.map(item => item.total);
+                
+                    const courseCtx = document.getElementById('courseChart').getContext('2d');
+                    new Chart(courseCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: courseLabels,
+                            datasets: [{
+                                label: 'Number of Students',
+                                data: courseCounts,
+                                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                    populateTable(data, 'courseTable');
+                })
+                .catch(error => console.error('Error fetching course data:', error));
+            
+            // Fetch and create Semester Chart
+            fetch('/admin/student_counts_by_semester')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data || data.error) {
+                        console.error('No data or error in fetching semester data:', data.error);
+                        return;
+                    }
+        
+                    const semesterLabels = data.map(item => `Semester ${item.semester}`);
+                    const semesterCounts = data.map(item => item.total);
+                
+                    const semesterCtx = document.getElementById('semesterChart').getContext('2d');
+                    new Chart(semesterCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: semesterLabels,
+                            datasets: [{
+                                label: 'Students by Semester',
+                                data: semesterCounts,
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.6)',
+                                    'rgba(54, 162, 235, 0.6)',
+                                    'rgba(255, 206, 86, 0.6)',
+                                    'rgba(75, 192, 192, 0.6)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    });
+                    populateTable(data, 'semesterTable');
+                })
+                .catch(error => console.error('Error fetching semester data:', error));
+        
+            // Function to populate tables with fetched data
+            function populateTable(data, tableId) {
+                const table = document.getElementById(tableId);
+                if (table) {
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        Object.values(item).forEach(value => {
+                            const cell = document.createElement('td');
+                            cell.textContent = value;
+                            row.appendChild(cell);
+                        });
+                        table.appendChild(row);
+                    });
+                } else {
+                    console.error(`Table with id ${tableId} not found`);
+                }
+            }
+        });
+        
+    </script>
+</head>
+<body>
+    <!--Sidebar-->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>B B V S</h2>
+        </div>
+        <ul class="sidebar-links">
+            <li>
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fa-solid fa-chart-simple"></i><span class="material-symbols-outlined">dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('student') }}">
+                    <i class="fa-solid fa-users"></i><span class="material-symbols-outlined">Students</span>
+                </a>
+                <ul class="child-links">
+                    <li>
+                        <a href="{{ url_for('list_of_student') }}">
+                            <i class="fa-solid fa-list"></i><span class="material-symbols-outlined">List of Students</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="{{ url_for('vote') }}">
+                    <i class="fa-solid fa-user-check"></i><span class="material-symbols-outlined">Voting</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('logout') }}">
+                    <i class="fa-solid fa-right-from-bracket"></i><span class="material-symbols-outlined">logout</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+    <!--End Sidebar-->
+
+    <!-- Student Page Content -->
+    <main class="student-content">
+        <div class="title-button-container">
+            <h2><i class="fas fa-users"></i> Students</h2>
+            <a href="{{ url_for('add_student') }}" class="student-add">Add Student</a>
+        </div>
+
+        <div class="students-chart-container">
+            <div style="width: 30%; height: 300px;">
+                <canvas id="courseChart"></canvas>
+            </div>
+            <div style="width: 30%; height: 300px;">
+                <canvas id="semesterChart"></canvas>
+            </div>
+            <div style="width: 30%; height: 300px;">
+                <canvas id="genderChart"></canvas>
+            </div>
+        </div>
+
+        <div class="tables-student-container">
+            <div class="table-box">
+                <h3>Total Students by Course</h3>
+                <table id="courseTable">
+                    <tr><th>Course</th><th>Total Students</th></tr>
+                </table>
+            </div>
+            <div class="table-box">
+                <h3>Total Students by Semester</h3>
+                <table id="semesterTable">
+                    <tr><th>Semester</th><th>Total Students</th></tr>
+                </table>
+            </div>
+        </div>
+    </main>
+    <!-- End Student Page Content-->
+
+</body>
+</html>

@@ -1,0 +1,354 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+*{
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body{
+    min-height: 100vh;
+    background: #F0F4FF;
+}
+
+/***** Sidebar *****/  
+        
+.sidebar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 260px;
+    display: flex;
+    overflow-x: hidden;
+    flex-direction: column;
+    background: #001d3d;
+    padding: 25px 20px;
+    transition: all 0.4s ease;
+}
+
+.sidebar .sidebar-header{
+    display: flex;
+    align-items: center;
+}
+
+.sidebar .sidebar-header h2{
+    color: #F0F4FF;
+    font-size: 1.25rem;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-left: 23px;
+}
+
+.sidebar-links {
+    list-style: none;
+    margin-top: 20px;
+    height: 80%;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.sidebar-links li a{
+    display: flex;
+    align-items: center;
+    gap: 0 20px;
+    color: #F0F4FF;
+    font-weight: 500;
+    white-space: nowrap;
+    padding: 15px 10px;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.sidebar-links li a:hover{
+    color: #161a2d;
+    background: #F0F4FF;
+    border-radius: 4px;
+}
+
+.child-links {
+    list-style: none;
+    padding-left: 30px;
+    display: none; /* Initially hidden */
+}
+
+.sidebar-links li:hover .child-links {
+    display: block; /* Display child links on hover */
+}
+
+.child-links li a {
+    color: #F0F4FF;
+    font-weight: 400;
+    padding: 8px 10px;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.child-links li a:hover {
+    color: #161a2d;
+    background: #F0F4FF;
+    border-radius: 4px;
+}
+/***** Responsive Sidebar for smaller screens *****/
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+    
+    .sidebar .sidebar-header h2 {
+        font-size: 1rem;
+    }
+    
+    .sidebar-links li a {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        padding: 10px;
+        justify-content: space-around;
+    }
+
+    .sidebar-links {
+        display: flex;
+        flex-direction: row;
+        height: auto;
+    }
+}
+
+/***** End Sidebar *****/
+
+/**** Add-student form ****/
+.add_student_container{
+    display: flex;
+    justify-content: center; /* Centers content horizontally */
+    padding-left: 250px; /* Adjust according to the sidebar width */
+    padding-top: 20px;
+    gap: 20px;
+    align-items: flex-start; 
+    width: 100%;
+}
+
+.form-container,
+.file-container {
+    background-color: #f7f9fc; /* Light background color */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px; /* Ensures both containers stay within a certain width */
+    box-sizing: border-box;
+}
+
+/* Form input styling */
+.student-form label {
+    display: block;
+    font-size: 14px;
+    color: #333;
+    margin-top: 10px;
+}
+
+.student-form input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* Button styling */
+.add-student-button {
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745; /* Green button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.add-student-button:hover {
+    background-color: #218838;
+}
+
+/* File upload styling */
+.file-container .file-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #dcdcdc;
+    padding: 10px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    width: 100%;
+    cursor: pointer;
+}
+
+.file-container .file-input {
+    display: none; /* Hide the default file input */
+}
+
+.file-container .file-cta {
+    background-color: #001f3f; /* Dark blue */
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.file-container .file-name {
+    color: #555;
+    font-size: 14px;
+    margin-left: 10px;
+    flex: 1;
+}
+
+/* Note text styling */
+.note-text {
+    font-size: 12px;
+    color: #777;
+    margin-top: 10px;
+}
+
+
+
+
+/***** Responsive Add-student form *****/
+@media (max-width: 768px) {
+    .add_student_container {
+        flex-direction: column;
+        margin-left: 0;
+    }
+
+    .form-container h2 {
+        font-size: 1.2rem;
+    }
+}
+/**** End Add-student form ****/
+
+/**** Students HTML ****/
+.student-content{
+    margin-left: 260px;
+    padding: 20px;
+    
+}
+.title-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #001d3d;
+    display: flex;
+    align-items: center;
+}
+
+h2 i {
+    background-color: #90e0ef;
+    border-radius: 6px;
+    color: #001d3d;
+    height: 35px;
+    width: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-right: 10px;
+}
+.students-chart-container{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.student-add {
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+.student-add:hover {
+    background-color: #218838;
+}
+.tables-student-container{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+.table-box {
+    width: 45%;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+@media (max-width: 768px) {
+    .student-content{
+        margin-left: 200px;
+    }
+}
+/**** End Students HTML ****/
+
+/**** Flash CSS ****/
+.flash-messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    z-index: 1000;
+}
+
+.flash-message {
+    background-color: #4CAF50; /* Green for success */
+    color: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    font-size: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    animation: fadeInOut 4s forwards;
+}
+
+/* Error flash message styling */
+.flash-message.error {
+    background-color: #f44336; /* Red for error */
+}
+
+/* Fade in and out effect */
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-10px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
+}

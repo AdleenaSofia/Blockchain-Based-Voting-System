@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Election Analytics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styleAdmin.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Wait for the DOM to load before running the script
+        document.addEventListener('DOMContentLoaded', function () {
+            // Parse the data passed from Flask
+            let votesByCourse = {{ votes_by_course|tojson|safe }};
+            let votesBySemester = {{ votes_by_semester|tojson|safe }};
+
+            let participants = {{ participants | tojson | safe }};
+            let nonParticipants = {{ non_participants | tojson | safe }};
+
+            console.log("Votes By Course:", votesByCourse); // Debug
+            console.log("Votes By Semester:", votesBySemester); // Debug
+            console.log("Participants:", participants); // Debug
+            console.log("Non-Participants:", nonParticipants); // Debug
+
+
+            // Debugging: Ensure the type of votesByCourse is correctly an array
+            console.log("Votes By Course (before parsing):", votesByCourse);
+            if (typeof votesByCourse === "string") {
+                votesByCourse = JSON.parse(votesByCourse); // Parse into an array
+            }
+            console.log("Votes By Course (after parsing):", votesByCourse);
+
+            // Check if votesByCourse is an array
+            if (!Array.isArray(votesByCourse)) {
+                console.error("votesByCourse is not an array:", votesByCourse);
+                return; // Exit if the data is invalid
+            }
+            // Initialize the votes by course chart
+            const courseCtx = document.getElementById('courseChart').getContext('2d');
+            new Chart(courseCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: votesByCourse.map(course => course.Course),  // Course names
+                    datasets: [{
+                        label: 'Votes by Course',
+                        data: votesByCourse.map(course => course.vote_count),  // Vote counts
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                }
+            });
+
+            // Debugging: Ensure the type of votesByCourse is correctly an array
+            console.log("Votes By Semester (before parsing):", votesBySemester);
+                if (typeof votesBySemester === "string") {
+                    votesBySemester = JSON.parse(votesBySemester); // Parse into an array
+                }
+            console.log("Votes By Semester (after parsing):", votesBySemester);
+
+            // Check if votesByCourse is an array
+            if (!Array.isArray(votesBySemester)) {
+                console.error("votesBySemester is not an array:", votesBySemester);
+                return; // Exit if the data is invalid
+            }
+            // Initialize the votes by semester chart
+            const semesterCtx = document.getElementById('semesterChart').getContext('2d');
+            new Chart(semesterCtx, {
+                type: 'pie',
+                data: {
+                    labels: votesBySemester.map(semester => semester.Semester),  // Semester names
+                    datasets: [{
+                        label: 'Votes by Semester',
+                        data: votesBySemester.map(semester => semester.vote_count),  // Vote counts
+                        backgroundColor: [
+                            'rgba(255, 159, 64, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(201, 203, 207, 0.2)',
+                            'rgba(75, 192, 192, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(201, 203, 207, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                }
+            });
+
+            // Parse participants if it's a string
+    if (typeof participants === "string") {
+        participants = JSON.parse(participants);
+    }
+    console.log("Participants (after parsing):", participants);
+
+    // Parse nonParticipants if it's a string
+    if (typeof nonParticipants === "string") {
+        nonParticipants = JSON.parse(nonParticipants);
+    }
+    console.log("Non-Participants:", nonParticipants);
+
+    // Append participants to the table
+    const participantsTable = document.getElementById('participantsTable');
+    if (Array.isArray(participants)) {
+        participants.forEach(participant => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${participant.StudentID}</td>
+                <td>${participant.Name}</td>
+                <td>${participant.Course}</td>
+                <td>${participant.Semester}</td>
+            `;
+            participantsTable.appendChild(row);
+        });
+    } else {
+        console.error("Participants is not an array:", participants);
+    }
+
+    // Append non-participants to the table
+    const nonParticipantsTable = document.getElementById('nonParticipantsTable');
+    if (Array.isArray(nonParticipants)) {
+        nonParticipants.forEach(nonParticipant => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${nonParticipant.StudentID}</td>
+                <td>${nonParticipant.Name}</td>
+                <td>${nonParticipant.Course}</td>
+                <td>${nonParticipant.Semester}</td>
+            `;
+            nonParticipantsTable.appendChild(row);
+        });
+    } else {
+        console.error("Non-Participants is not an array:", nonParticipants);
+    }
+        });
+    </script>
+</head>
+<body>
+    <!--Sidebar-->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>B B V S</h2>
+        </div>
+        <ul class="sidebar-links">
+            <li>
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fa-solid fa-chart-simple"></i><span class="material-symbols-outlined">dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('student') }}">
+                    <i class="fa-solid fa-users"></i><span class="material-symbols-outlined">Students</span>
+                </a>
+                <ul class="child-links">
+                    <li>
+                        <a href="{{ url_for('list_of_student') }}">
+                            <i class="fa-solid fa-list"></i><span class="material-symbols-outlined">List of Students</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="{{ url_for('vote') }}">
+                    <i class="fa-solid fa-user-check"></i><span class="material-symbols-outlined">Voting</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('logout') }}">
+                    <i class="fa-solid fa-right-from-bracket"></i><span class="material-symbols-outlined">logout</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+    <!--End Sidebar-->
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <section class="analytics-overview">
+            <h1>{{ election[0] }}</h1>
+            <h3>{{ election[1].strftime('%d %B %Y') }}</h3>
+
+            
+            <div class="candidate-container-analytics">
+            <!-- Candidate Information Cards -->
+            {% for candidate in candidates %}
+            <div class="candidate-card">
+                <h3>Candidate {{ loop.index }}:</h3>
+                <p>Name: {{ candidate.Name }}</p>
+                <p>Student ID: {{ candidate.StudentID }}</p>
+                <p>Semester: {{ candidate.Semester }}</p>
+                <p>Course: {{ candidate.Course }}</p>
+                <div class="vote-count">{{ candidate.vote_count }}</div>
+            </div>
+            {% endfor %}
+            </div>
+
+            <!-- Wrap the two sections in a container -->
+            <div class="statistics-container">
+                <!-- Participation Overview -->
+                <div class="participation-section">
+                    <h2>Votes by Course</h2>
+                    <canvas id="courseChart"></canvas>
+                </div>
+
+                <!-- Candidate Popularity -->
+                <div class="candidate-popularity-section">
+                    <h2>Votes by Semester</h2>
+                    <canvas id="semesterChart"></canvas>
+                </div>
+            </div>
+
+
+
+
+            <!-- Tables for Participants and Non-Participants -->
+            <div class="participants-section">
+                <h4>List of Participants</h4>
+                <table id="participantsTable">
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Course</th>
+                        <th>Semester</th>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="non-participants-section">
+                <h4>List of Not Participated</h4>
+                <table id="nonParticipantsTable">
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Course</th>
+                        <th>Semester</th>
+                    </tr>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

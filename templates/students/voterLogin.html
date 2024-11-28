@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voter Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesVoter.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        {% with messages = get_flashed_messages(with_categories=True) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+        <h2>Login</h2>
+        <form action="{{ url_for('voterLogin') }}" method="POST">
+        <div class="input-group">
+            <label for="id-input">ID</label>
+            <input type="text" id="id-input" name="id-input" placeholder="AMxxxxxxxxxx">
+        </div>
+        <button type="submit" class="login-button">Login</button>
+        </form>
+    </div>
+</body>
+</html>

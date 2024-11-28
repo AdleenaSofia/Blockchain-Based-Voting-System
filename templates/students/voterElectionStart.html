@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voter Election Start</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesVoter.css') }}">
+</head>
+<body>
+    <div class="election-start-container">
+        <h2>{{ election_name }}</h2>
+        <a href="{{ url_for('voterElection', election_id=election_id) }}">
+            <button>Enter Voting</button>
+        </a>
+    </div>
+</body>
+</html>

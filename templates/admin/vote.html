@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styleAdmin.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!--Sidebar-->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>B B V S</h2>
+        </div>
+        <ul class="sidebar-links">
+            <li>
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fa-solid fa-chart-simple"></i><span class="material-symbols-outlined">dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('student') }}">
+                    <i class="fa-solid fa-users"></i><span class="material-symbols-outlined">Students</span>
+                </a>
+                <ul class="child-links">
+                    <li>
+                        <a href="{{ url_for('list_of_student') }}">
+                            <i class="fa-solid fa-list"></i><span class="material-symbols-outlined">List of Students</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="{{ url_for('vote') }}">
+                    <i class="fa-solid fa-user-check"></i><span class="material-symbols-outlined">Voting</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('logout') }}">
+                    <i class="fa-solid fa-right-from-bracket"></i><span class="material-symbols-outlined">logout</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+    <!--End Sidebar-->
+
+    <!--Vote Board-->
+    <section class="datas">
+        <div class="activity">
+            <div class="title">
+                <i class="fa-solid fa-user-check"></i>
+                <span class="text">Votes</span>
+                <a href="{{ url_for('ElectionForm') }}"><button>Start Election</button></a>
+            </div>
+
+            <div class="vote result">
+                <div class="title">
+                    <header>List of Election</header>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Election Name</th>
+                            <th>Election Date</th>
+                            <th>Action</th>
+                        </tr>
+                        {% for election in elections %}
+                        <tr>
+                            <td>{{ election[1] }} </td>
+                            <td>
+                                {% if election[2] %}
+                                    {{ election[2].strftime('%d %B %Y') }}
+                                {% else %}
+                                    Not Available
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('ElectionAnalytics', election_id=election[0]) }}">
+                                    <button class="button-visit-election" >Visit <i class="fa-solid fa-arrow-right"></i></button></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--End Vote Board-->
+</body>
+</html>

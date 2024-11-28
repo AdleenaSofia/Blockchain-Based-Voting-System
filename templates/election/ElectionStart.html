@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Election Start</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/electionCss.css') }}">
+</head>
+<body>
+    <div class="election-header">
+        <p>Election Name: {{ election_name }}</p>
+        <p>Election Date: {{ election_date }}</p>
+    </div>
+
+    <div class="add-candidate">
+        <h2>Add Candidate</h2>
+        <label for="student-id">Student ID:</label>
+        <input type="text" id="student-id" placeholder="AMXXXXXXXXXX">
+        <button class="add-candidate-button">Add Candidate</button>
+    </div>
+
+    <div class="candidates-container">
+        
+    </div>
+
+    <form action="{{ url_for('start_election', election_id=election_id) }}" method="post">
+        <button class="start-button">Start</button>
+    </form>
+    <script>
+        function addCandidate() {
+            const studentID = document.getElementById("student-id").value;
+
+            // Fetch candidate details based on the StudentID
+            fetch(`/get_candidate/${studentID}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Display candidate information
+                        const candidateContainer = document.querySelector(".candidates-container");
+                        const candidateCard = `
+                            <div class="candidate-card">
+                                <h3>${data.name}</h3>
+                                <p>Student ID: ${data.StudentID}</p>
+                                <p>Course: ${data.course}</p>
+                                <p>Semester: ${data.semester}</p>
+                            </div>`;
+                        candidateContainer.innerHTML += candidateCard;
+
+                        // Save candidate to the database
+                        fetch('/save_candidate', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                studentID: data.StudentID,
+                                electionID: {{ election_id }} // election_id is passed from Flask to HTML
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(saveData => {
+                            if (saveData.success) {
+                                alert('Candidate successfully added!');
+                            } else {
+                                alert('Failed to add candidate.');
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                    } else {
+                        alert("Candidate not found");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Add event listener for the Add Candidate button
+        document.querySelector('.add-candidate-button').addEventListener('click', addCandidate);
+    </script>
+    
+        
+</body>
+</html>

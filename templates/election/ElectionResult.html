@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/electionCss.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('voteChart').getContext('2d');
+            
+            // Data from the backend
+            const votes = {{ candidates | map(attribute='vote_count') | list | safe }};
+            const labels = {{ candidates | map(attribute='name') | list | safe }};
+            const electionId = {{ election_id }};
+            
+            const backgroundColors = votes.map((vote, index) => {
+                return vote === Math.max(...votes) ? '#28a745' : '#dc3545';
+            });
+    
+            // Initialize the chart
+            const voteChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Votes',
+                        data: votes,
+                        backgroundColor: backgroundColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+    
+            // Function to fetch updated votes
+            async function fetchVotes() {
+                try {
+                    const response = await fetch(`/get_votes/${electionId}`);
+                    const data = await response.json();
+                    const updatedVotes = data.votes;
+    
+                    // Update displayed vote counts
+                    document.querySelectorAll('.vote-count span').forEach((el, index) => {
+                        el.textContent = updatedVotes[index] || 0;
+                    });
+    
+                    // Update chart data
+                    voteChart.data.datasets[0].data = updatedVotes;
+                    voteChart.update();
+                } catch (error) {
+                    console.error('Error fetching votes:', error);
+                }
+            }
+    
+            // Poll for updates every 5 seconds
+            setInterval(fetchVotes, 5000);
+        });
+    </script>
+    
+    
+</head>
+<body>
+    <div class="electionResult-container">
+        <h2>Election Result</h2>
+        <div class="election-header">
+            <p>Election Name: {{ election_name }}</p>
+            <p>Election Date: {{ election_date }}</p>
+        </div>
+
+        <div class="result-box">
+            <!-- Candidate Info -->
+            {% for candidate in candidates %}
+            <div class="candidateResult-info">
+                <div class="candidateResult-details">
+                    <h3>Candidate {{ loop.index }}</h3>
+                    <div class="candidateResult-detail">
+                        <label for="">Name:</label>
+                        <span>{{ candidate.name }}</span>
+                    </div>
+                    <div class="candidateResult-detail">
+                        <label for="">Semester:</label>
+                        <span>{{ candidate.semester }}</span>
+                    </div>
+                    <div class="candidateResult-detail">
+                        <label for="">Course:</label>
+                        <span>{{ candidate.course }}</span>
+                    </div>
+                </div>
+                <div class="vote-count">
+                    <span>{{ candidate.vote_count }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <canvas id="voteChart"></canvas>
+
+        <a href="{{ url_for('end_election', election_id=election_id) }}">
+            <button class="end-button">End Election</button>
+        </a>
+    </div>
+
+    
+</body>
+</html>

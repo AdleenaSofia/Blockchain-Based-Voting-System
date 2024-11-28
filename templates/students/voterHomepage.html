@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voter Homepage</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesVoter.css') }}">
+</head>
+<body>
+    <div class="student-container">
+        <form action="{{ url_for('voterLogout') }}" method="GET">
+            <button type="submit" class="logout">Logout</button>
+        </form>
+        <h2>Blockchain Based Voting System</h2>
+        <div class="student-info-container">
+            <div class="student-info">
+                <span>Name : {{ name }}</span>
+            </div>
+            <div class="student-info">
+                <span>ID : {{ id }}</span>
+            </div>
+            <div class="student-info">
+                <span>Course : {{ course }}</span>
+            </div>
+            <div class="student-info">
+                <span>Semester : {{ semester }}</span>
+            </div>
+        </div>
+
+        <div>
+            {% if election_status == "ongoing" %}
+            <a href="{{ url_for('voterElectionStart', election_id=election_id) }}">
+                <button class="election-start" style="background-color: green;color:white;">Election Ongoing</button>
+            </a>
+            {% elif election_status == "completed" %}
+            <button class="election-start" style="background-color: blue;color:white;">Election Completed</button>
+            {% else %}
+            <button class="election-start" style="background-color: red;color:white;" disabled>No Election Started</button>
+            {% endif %}
+        </div>
+        
+
+    </div>
+
+    
+</body>
+</html>
